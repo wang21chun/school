@@ -4,7 +4,7 @@ module.exports = {
         name: "school",
         script: "./app.js",
         watch: false,
-        env_production: {
+        env: {
             "PORT": 3001,
             "NODE_ENV": "production",
         }
