@@ -110,20 +110,24 @@ function getCourse(orders) {
         let sql = "SELECT * FROM `course` WHERE `id` in (?) ";
         let data = orders.data;
         let courseIds = data.map(o => o.courseId);
-        DB.QueryList(sql, [courseIds])
-            .then(queryProfession)
-            .then(formatDate)
-            .then(result => {
-                let group = _.groupBy(result, o => o.id);
-                data.forEach(o => {
-                    let [course] = group[o.courseId];
-                    o.course = course;
-                });
-                resolve(orders)
-            }).catch(err => {
-                console.error(err)
-                reject(err)
-            })
+        if (courseIds.length > 0) {
+            DB.QueryList(sql, [courseIds])
+                .then(queryProfession)
+                .then(formatDate)
+                .then(result => {
+                    let group = _.groupBy(result, o => o.id);
+                    data.forEach(o => {
+                        let [course] = group[o.courseId];
+                        o.course = course;
+                    });
+                    resolve(orders)
+                }).catch(err => {
+                    console.error(err)
+                    reject(err)
+                })
+        } else {
+            resolve(orders)
+        }
 
     })
 }
