@@ -5,7 +5,7 @@ const CRYPTO = require("../util/crypto");
 const RESPONSE = require("../util/response");
 const SMSClient = require("../util/SMSClient");
 const ObjectUtil = require("../util/objectUtil");
-const WeChat = require("../util/wechat")
+const WeChat = require("../util/WeChat")
 const _ = require('lodash');
 const router = express.Router();
 
