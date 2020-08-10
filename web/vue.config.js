@@ -1,5 +1,5 @@
 module.exports = {
-    publicPath: process.env.NODE_ENV === 'production' ? 'https://wodiancai.com/cr/web/' : "/",
+    publicPath: process.env.NODE_ENV === 'production' ? 'https://wodiancai.com/school/web/' : "/",
     outputDir: process.env.NODE_ENV === 'production' ? '../service/public/web/' : './dist',
     filenameHashing: false,
     productionSourceMap: false,
