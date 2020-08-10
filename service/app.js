@@ -32,7 +32,7 @@ app.use(session({
     genid: function(req) {
         return uuid() // use UUIDs for session IDs
     },
-    secret: 'computer-room', // 对session id 相关的cookie 进行签名
+    secret: 'school', // 对session id 相关的cookie 进行签名
     resave: false,
     saveUninitialized: true,
     cookie: {
