@@ -1,11 +1,11 @@
 module.exports = {
   apps : [
       {
-        name: "ComputerRoom",
+        name: "school",
         script: "./app.js",
         watch: false,
         env_production: {
-            "PORT": 3000,
+            "PORT": 3001,
             "NODE_ENV": "production",
         }
       }
