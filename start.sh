@@ -1,1 +1,1 @@
-pm2 start service/bin/www -n school
+pm2 start ./service/pm2.config.js
