@@ -4,7 +4,7 @@ const cors = require('cors');
 var path = require('path');
 var cookie = require('cookie');
 var cookieParser = require('cookie-parser');
-//var session = require('express-session');
+var session = require('express-session');
 var logger = require('morgan');
 const uuid = require('node-uuid');
 
@@ -26,33 +26,33 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-//app.use(cookieParser());
+app.use(cookieParser());
 // 使用 session 中间件
-// app.use(session({
-//     genid: function(req) {
-//         return uuid() // use UUIDs for session IDs
-//     },
-//     secret: 'school', // 对session id 相关的cookie 进行签名
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: {
-//         path: '/',
-//         maxAge: 24 * 60 * 60 * 1000,
-//         secure: false,
-//         sameSite: 'strict'
-//     },
-//     rolling: true,
-//     name: "sessionID",
-//     proxy: true,
-//     unset: 'keep'
-// }));
+app.use(session({
+    genid: function(req) {
+        return uuid() // use UUIDs for session IDs
+    },
+    secret: 'school', // 对session id 相关的cookie 进行签名
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        path: '/',
+        maxAge: 24 * 60 * 60 * 1000,
+        secure: false,
+        sameSite: 'strict'
+    },
+    rolling: true,
+    name: "sessionID",
+    proxy: true,
+    unset: 'keep'
+}));
 
-// app.use((req, res, next) => {
-//     if (undefined === req.cookies._id) {
-//         res.cookie('_id', req.query.uuid || req.sessionID);
-//     }
-//     next();
-// })
+app.use((req, res, next) => {
+    if (undefined === req.cookies._id) {
+        res.cookie('_id', req.query.uuid || req.sessionID);
+    }
+    next();
+})
 
 
 app.use(express.static(path.join(__dirname, 'public')));
