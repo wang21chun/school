@@ -24,6 +24,12 @@
                 <p slot="title">课程信息</p>
                 <div>
                     <Form :label-width="110" ref="courseInfo" class="edit-form" :model="course" :rules="rulesInline">
+                        <FormItem label="分类" prop="groupType">
+                            <Select v-model="course.groupType">
+                                <Option v-for="item in classification" :value="item.id" :key="item.id" placeholder="选择课程分类">
+                                    {{ item.name }}</Option>
+                            </Select>
+                        </FormItem>
                         <FormItem label="课程名称" prop="title">
                             <Input type="text" v-model="course.title" placeholder="输入课程名称" />
                         </FormItem>
@@ -71,9 +77,10 @@ export default {
             courseDetailsModal: false,
             free: true,
             professionName: "",
+            classification: [],
             course: {
                 title: "",
-                groupType: 0,
+                groupType: '',
                 briefDescription: "",
                 price: 0,
                 startEndDate: [],
@@ -85,6 +92,11 @@ export default {
                 placeholder: '课程详细描述'
             },
             rulesInline: {
+                groupType: [{
+                    required: true,
+                    message: '选择课程分类',
+                    trigger: 'blur'
+                }],
                 title: [
                     { required: true, message: '输入课程名称', trigger: 'blur' },
                 ],
@@ -128,6 +140,7 @@ export default {
         if (undefined !== this.oldCourse && Object.keys(this.oldCourse).length > 0) {
             this.course = this.oldCourse;
         }
+        this.searchClassification()
     },
     computed: {
         editor() {
@@ -142,9 +155,6 @@ export default {
             this.free = value;
             if (value) {
                 this.course.price = 0.0
-                this.course.groupType = 0;
-            } else {
-                this.course.groupType = 1;
             }
         },
         delTag(event, name) {
@@ -189,6 +199,12 @@ export default {
         onEditorChange({ quill, html, text }) {
             console.log('editor change!', quill, html, text)
             this.content = html
+        },
+        searchClassification() {
+            this.axios.get('/api/course/searchClassification')
+                .then(res => {
+                    this.classification = res.data;
+                })
         },
         save() {
             this.loading = true;

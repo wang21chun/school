@@ -1,6 +1,6 @@
 module.exports = {
  sms:{
- 	accessKeyId: '',
-    accessKeySecret: '',
+ 	accessKeyId: 'fdsafasdf',
+    accessKeySecret: 'fdsaf',
  }
 }

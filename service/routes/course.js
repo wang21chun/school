@@ -45,6 +45,7 @@ router.post('/searchList', function(req, res, next) {
 
     DB.QueryPage(sql.join(" "), queryValue)
         .then(queryProfession)
+        .then(queryClassification)
         .then(formatDate)
         .then(results => {
             Object.assign(page, results);
@@ -93,6 +94,16 @@ router.post('/save', function(req, res, next) {
 });
 
 
+router.get('/searchClassification', function(req, res) {
+    let params = req.body;
+    console.info("入参:", params);
+    let sql = 'SELECT * FROM classification'
+    DB.QueryList(sql,[])
+    .then(result=>{
+        res.json(RESPONSE.SUCCESS(result));
+    })
+})
+
 function insertProfession(data) {
     return new Promise((resolve, reject) => {
         console.log(data);
@@ -125,6 +136,27 @@ function queryProfession(courses) {
     })
 }
 
+
+
+function queryClassification(courses) {
+    return new Promise((resolve, reject) => {
+        let sql = "SELECT * FROM `classification` WHERE `id` in( ? )  ";
+        let { data } = courses;
+        let ids = data.map(o => o.groupType);
+        if (ids.length <= 0) {
+            resolve(courses);
+            return;
+        }
+        DB.QueryList(sql, [ids])
+            .then(result => {
+                let group = _.groupBy(result, o => o.id);
+                console.log(group);
+                data.forEach(o => o.classification = group[o.groupType][0]);
+                resolve(courses);
+            })
+            .catch(reject);
+    })
+}
 
 
 function formatDate(courses) {

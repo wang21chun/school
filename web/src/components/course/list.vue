@@ -104,12 +104,11 @@ export default {
                 },
                 {
                     title: '分类',
-                    key: 'groupType',
-                    width: 70,
+                    key: 'classification',
+                    width: 100,
                     render: (h, { row }) => {
-                        let { groupType } = row;
-                        let label = 0 === groupType ? "免费" : "收费";
-                        return h('div', label);
+                        let { classification } = row;
+                        return h('div', classification.name);
                     }
                 },
 
