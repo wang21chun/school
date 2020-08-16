@@ -4,7 +4,7 @@
 /web-app/node_modules
 /service/public/web-app
 /service/public/web
-/service/config.js
+
 /service/public/uploads/*.*
 .DS_Store
 node_modules
@@ -29,3 +29,4 @@ yarn-error.log*
 *.sw?
 */package-lock.json
 *.xlsx
+*/service/config.js
