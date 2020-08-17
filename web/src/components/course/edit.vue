@@ -24,7 +24,7 @@
                 <p slot="title">课程信息</p>
                 <div>
                     <Form :label-width="110" ref="courseInfo" class="edit-form" :model="course" :rules="rulesInline">
-                        <FormItem label="分类" prop="groupType">
+                        <FormItem label="培训类别" prop="groupType">
                             <Select v-model="course.groupType">
                                 <Option v-for="item in classification" :value="item.id" :key="item.id" placeholder="选择课程分类">
                                     {{ item.name }}</Option>
@@ -93,9 +93,10 @@ export default {
             },
             rulesInline: {
                 groupType: [{
+                    type:'number',
                     required: true,
-                    message: '选择课程分类',
-                    trigger: 'blur'
+                    message: '选择培训类别',
+                    trigger: 'change'
                 }],
                 title: [
                     { required: true, message: '输入课程名称', trigger: 'blur' },

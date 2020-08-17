@@ -84,7 +84,7 @@
                             <Icon type="md-list-box" />
                             培训课程管理
                         </template>
-                        <MenuItem name="courseList" :to="{path:'/courseList'}">课程列表</MenuItem>
+                        <MenuItem name="courseList" :to="{path:'/courseList'}">培训类别</MenuItem>
                     </Submenu>
                 </Menu>
                 <div slot="trigger"></div>
