@@ -1,9 +1,11 @@
 const redis = require("redis");
+const config = require('../config.json')
+const redisConfig = config.redis
 const client = redis.createClient({
     host: "47.92.3.212",
     port: 6379,
     connect_timeout: 60000,
-    password: "yunxin@2019",
+    password: redisConfig.password,
     db: 0,
     prefix: 'computer_room'
 });

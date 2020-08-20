@@ -1,5 +1,5 @@
 const Core = require('@alicloud/pop-core');
-const config = require('../config.js')
+const config = require('../config.json')
 var client = new Core({
     accessKeyId: config.sms.accessKeyId,
     accessKeySecret: config.sms.accessKeySecret,

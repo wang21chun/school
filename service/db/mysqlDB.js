@@ -1,11 +1,12 @@
 const mysql = require('mysql');
 const sqlUtil = require('../util/sqlUtil');
+const config = require('../config.json')
 const POLL = mysql.createPool({
     connectionLimit: 10,
     host: '47.92.3.212',
     port: 3306,
-    user: 'root',
-    password: 'Yunxin@2019',
+    user: config.db.user,
+    password: config.db.password,
     database: 'school'
 });
 
