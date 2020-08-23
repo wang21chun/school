@@ -123,7 +123,7 @@ export default {
                     maxWidth: 200,
                     tooltip: true,
                     render: (h, { row }) => {
-                        let { profession } = row;
+                        let { profession=[] } = row;
                         let tags = profession.map(o => o.label);
                         return h('div', tags.join(","));
                     }
