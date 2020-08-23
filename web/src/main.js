@@ -26,7 +26,7 @@ Vue.use(ViewUI, {
 Vue.use(VueQuillEditor)
 Vue.use(VueAxios, axios);
 Vue.prototype.HOME = '/api'
-//axios.defaults.baseURL = "https://wodiancai.com/school/";
+axios.defaults.baseURL = "https://wodiancai.com/school/";
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-=urlencoded;charset=UTF-8';
 axios.defaults.crossDomain = true;
 axios.defaults.withCredentials = true;
