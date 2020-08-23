@@ -61,35 +61,56 @@ router.post('/searchList', function(req, res, next) {
 router.post('/save', function(req, res, next) {
     let params = req.body;
     console.info("入参:", params);
+    if (params.id === 0) {
+        let course = filter(params, ['title', 'groupType', 'briefDescription', 'price', 'iconUrl', 'details'])
+        course.startDateTime = params.startEndDate[0]
+        course.endDateTime = params.startEndDate[1]
+        let profession = params.profession;
+        insertCourse(course)
+            .then(result => {
+                return new Promise((resolve, reject) => {
+                    resolve(profession.map(o => {
+                        return [result.insertId, o.value, o.label];
+                    }));
+                });
+            })
+            .then(insertProfession)
+            .then(() => {
+                res.json(RESPONSE.SUCCESS());
+            }).catch((err) => {
+                console.log(err);
+                res.json(RESPONSE.ERROR(err));
+            })
+    } else {
+        let course = filter(params, ['id', 'title', 'groupType', 'briefDescription', 'price', 'iconUrl', 'details'])
+        course.startDateTime = params.startEndDate[0]
+        course.endDateTime = params.startEndDate[1]
+        const deleteTag = params.deleteTag
+        let profession = params.profession.filter(el => el.id === 0);
+        updateCourse(course)
+            .then(result => {
+                return new Promise((resolve, reject) => {
+                    resolve(profession.map(o => {
+                        return [course.id, o.value, o.label];
+                    }));
+                });
+            })
+            .then(insertProfession)
+            .then(result => {
+                return new Promise((resolve, reject) => {
+                    resolve(deleteTag)
+                });
+            })
+            .then(deleteProfession)
+            .then(() => {
+                res.json(RESPONSE.SUCCESS());
+            }).catch((err) => {
+                console.log(err);
+                res.json(RESPONSE.ERROR(err));
+            })
 
-    let sql = "INSERT INTO `course` SET ?";
-    let course = { status: 0 };
-    let profession = [];
-    for (let key in params) {
-        let value = params[key];
-        if (key == 'startEndDate') {
-            course['startDateTime'] = value[0];
-            course['endDateTime'] = value[1];
-        } else if ('profession' === key && Array.isArray(value)) {
-            profession = value;
-        } else {
-            course[key] = value;
-        }
     }
-    DB.Insert(sql, course)
-        .then(result => {
-            return new Promise((resolve, reject) => {
-                resolve(profession.map(o => {
-                    return [result.insertId, o.value, o.label];
-                }));
-            });
-        })
-        .then(insertProfession)
-        .catch(err => {
-            console.error(err)
-            res.json(RESPONSE.ERROR(err))
-        })
-    res.json(RESPONSE.SUCCESS());
+
 
 });
 
@@ -98,24 +119,41 @@ router.get('/searchClassification', function(req, res) {
     let params = req.body;
     console.info("入参:", params);
     let sql = 'SELECT * FROM classification'
-    DB.QueryList(sql,[])
-    .then(result=>{
-        res.json(RESPONSE.SUCCESS(result));
-    })
+    DB.QueryList(sql, [])
+        .then(result => {
+            res.json(RESPONSE.SUCCESS(result));
+        })
 })
 
 function insertProfession(data) {
     return new Promise((resolve, reject) => {
-        console.log(data);
         let sql = "INSERT INTO `profession` (`courseId`,`value`,`label`) VALUES ?";
-        DB.Insert(sql, [data])
-            .then(result => {
-                resolve();
-            })
-            .catch(reject);
+        if (data.length > 0) {
+            DB.Insert(sql, [data])
+                .then(result => {
+                    resolve();
+                })
+                .catch(reject);
+        } else {
+            resolve();
+        }
+
     })
 }
 
+function deleteProfession(id) {
+    return new Promise((resolve, reject) => {
+        let sql = "DELETE FROM `profession` WHERE id in(?)";
+        if (id.length > 0) {
+            DB.Insert(sql, [id])
+                .then(resolve)
+                .catch(reject);
+        } else {
+            resolve()
+        }
+
+    })
+}
 
 function queryProfession(courses) {
     return new Promise((resolve, reject) => {
@@ -150,7 +188,6 @@ function queryClassification(courses) {
         DB.QueryList(sql, [ids])
             .then(result => {
                 let group = _.groupBy(result, o => o.id);
-                console.log(group);
                 data.forEach(o => o.classification = group[o.groupType][0]);
                 resolve(courses);
             })
@@ -170,5 +207,34 @@ function formatDate(courses) {
 }
 
 
+function insertCourse(course) {
+    return new Promise((resolve, reject) => {
+        let sql = "INSERT INTO `course` SET ?";
+        DB.Insert(sql, course)
+            .then(resolve)
+            .catch(reject)
+    })
+}
+
+function updateCourse(course) {
+    return new Promise((resolve, reject) => {
+        let sql = "UPDATE `course` SET `title` = ?,`groupType` = ? ,`price`=?,`briefDescription`=?,`details`=?,`startDateTime`=?,`endDateTime`=? WHERE `id` = ?";
+        const { title, groupType, price,briefDescription, details, startDateTime, endDateTime, id } = course
+        DB.Update(sql, [title, groupType, price,briefDescription, details, startDateTime, endDateTime, id])
+            .then(resolve)
+            .catch(reject)
+    })
+}
+
+function filter(obj, includeFiled) {
+    let course = { status: 0 };
+    let profession = [];
+    for (let key in obj) {
+        if (includeFiled.includes(key)) {
+            course[key] = obj[key]
+        }
+    }
+    return course
+}
 
 module.exports = router;

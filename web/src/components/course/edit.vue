@@ -79,6 +79,7 @@ export default {
             professionName: "",
             classification: [],
             course: {
+                id:0,
                 title: "",
                 groupType: '',
                 briefDescription: "",
@@ -86,7 +87,8 @@ export default {
                 startEndDate: [],
                 iconUrl: "",
                 details: "",
-                profession: []
+                profession: [],
+                deleteTag:[],
             },
             editorOption: {
                 placeholder: '课程详细描述'
@@ -139,7 +141,9 @@ export default {
     },
     created() {
         if (undefined !== this.oldCourse && Object.keys(this.oldCourse).length > 0) {
-            this.course = this.oldCourse;
+           Object.assign(this.course,this.oldCourse) 
+            this.free = this.oldCourse.price <= 0
+            this.course.startEndDate = [this.oldCourse.startDateTime,this.oldCourse.endDateTime]
         }
         this.searchClassification()
     },
@@ -158,8 +162,12 @@ export default {
                 this.course.price = 0.0
             }
         },
-        delTag(event, name) {
-            this.course.profession.splice(name, 1);
+        delTag(event, index) {
+            let tag = this.course.profession[index]
+            if(tag.id > 0){
+                this.course.deleteTag.push(tag.id)
+            }
+            this.course.profession.splice(index, 1);
         },
         addProfession() {
             let { profession } = this.course;
@@ -173,6 +181,7 @@ export default {
             let maxValue = _.last(_.orderBy(profession, ['value'], ['asc']));
             maxValue = undefined === maxValue ? 0 : maxValue.value;
             let newProfession = {
+                id:0,
                 value: ++maxValue,
                 label: professionName
             }
@@ -182,7 +191,7 @@ export default {
         },
         openDetailsModal() {
             this.courseDetailsModal = true;
-            this.course.details = `<p>${this.course.briefDescription}</p>`;
+            this.course.details = this.course.details === '' ?  `<p>${this.course.briefDescription}</p>` : this.course.details
 
         },
         datePickerChange(val) {

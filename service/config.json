@@ -1,6 +1,17 @@
-module.exports = {
- sms:{
- 	accessKeyId: 'fdsafasdf',
-    accessKeySecret: 'fdsaf',
- }
+{
+    "sms":
+    {
+        "accessKeyId": "LTAI4FhW6odQAZpFzyCWjYgP",
+        "accessKeySecret": "LkK47GJwbyST2JF12yUgYwoZmSuLdG"
+    },
+    "db":
+    {
+        "user": "root",
+        "password": "Yunxin@2019"
+    },
+    "redis":
+    {
+        "password": "yunxin@2019"
+    }
+
 }
