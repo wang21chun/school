@@ -1,17 +1,17 @@
 {
     "sms":
     {
-        "accessKeyId": "LTAI4FhW6odQAZpFzyCWjYgP",
-        "accessKeySecret": "LkK47GJwbyST2JF12yUgYwoZmSuLdG"
+        "accessKeyId": "",
+        "accessKeySecret": ""
     },
     "db":
     {
-        "user": "root",
-        "password": "Yunxin@2019"
+        "user": "",
+        "password": ""
     },
     "redis":
     {
-        "password": "yunxin@2019"
+        "password": ""
     }
 
 }
