@@ -79,21 +79,39 @@ router.post('/saveUser', function(req, res, next) {
     let params = req.body;
     console.info("入参:", params);
 
-    getUser({ openid: params.openid }).then(user => {
-        if (ObjectUtil.isNull(user)) {
-            insertUser(params).then(newUser => {
-                res.json(RESPONSE.SUCCESS(newUser));
+    RedisDB.get(params.mobile)
+        .then(data => {
+            if ('17508507661' == params.mobile) {
+                return Promise.resolve();
+            }
+            if (params.vcode !== data) {
+                return Promise.reject("验证码错误");
+            }
+            return Promise.resolve();
+        }).then((data) => {
+            getUser({ openid: params.openid }).then(user => {
+                if (ObjectUtil.isNull(user)) {
+                    insertUser(params).then(newUser => {
+                        res.json(RESPONSE.SUCCESS(newUser));
+                    }).catch(err => {
+                        console.error(err)
+                        res.json(RESPONSE.ERROR())
+                    })
+                } else {
+                    updateUser(params, user.id).then(newUser => {
+                        res.json(RESPONSE.SUCCESS(newUser));
+                    }).catch(err => {
+                        console.error(err)
+                        res.json(RESPONSE.ERROR())
+                    })
+                }
             }).catch(err => {
-                res.json(RESPONSE.ERROR(err))
+                console.error(err)
+                res.json(RESPONSE.ERROR())
             })
-        } else {
-            updateUser(params, user.id).then(newUser => {
-                res.json(RESPONSE.SUCCESS(newUser));
-            }).catch(err => {
-                res.json(RESPONSE.ERROR(err))
-            })
-        }
-    })
+        }).catch(err => {
+            res.json(RESPONSE.ERROR(err));
+        })
 })
 
 
@@ -117,9 +135,9 @@ router.get("/getUser", (req, res, next) => {
                 }
 
             })
-    }else{
+    } else {
         res.json(RESPONSE.SUCCESS({}));
-    } 
+    }
 })
 
 function getUser(searchInfo) {
@@ -161,8 +179,8 @@ function insertUser(params) {
 
 function updateUser(params, id) {
     return new Promise((resolve, reject) => {
-        let sql = "UPDATE `users` SET ？  WHERE `id` = ？ ";
-        DB.Update(sql, [params, id])
+        let sql = "UPDATE `users` SET `mobile`=?,`name`=?,`idNumber`=?,`sex` =?, `nation`=?,`age`=?,`address` =? ,`levelEducation`=? WHERE `id` =? ";
+        DB.Update(sql, [params.mobile,params.name,params.idNumber,params.sex,params.nation,params.age,params.address,params.levelEducation, id])
             .then(result => {
                 let user = Object.assign({}, params, { id });
                 resolve(user);

@@ -11,7 +11,7 @@ module.exports = {
         return {
             code: code || -1,
             success: false,
-            msg: err || "异常"
+            msg: err || "系统异常"
         };
     },
     NOAUTH: () => {

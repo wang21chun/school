@@ -14,23 +14,27 @@ client.on('error', function(err) {
     console.error('error event - ' + client.host + ':' + client.port + ' - ' + err);
 });
 
+function wrapKey(key){
+    return "school:"+key
+}
+
 module.exports = {
     get: (key) => {
         return new Promise((resolve, reject) => {
-            client.get(key, (err, res) => {
+            client.get(wrapKey(key), (err, res) => {
                 if (err) reject(err);
                 else resolve(res)
             })
         })
     },
     set: (key, value) => {
-        return client.set(key, value, 'EX', 60*1000);
+        return client.set(wrapKey(key), value, 'EX', 60*1000);
     },
     setEx:(key, value,seconds) => {
-        return client.set(key, value, 'EX', seconds);
+        return client.set(wrapKey(key), value, 'EX', seconds);
     },
     del:(key)=>{
-       return client.del(key);
+       return client.del(wrapKey(key));
     }
 
 };
