@@ -44,8 +44,8 @@
                                 </Button>
                                 <DropdownMenu slot="list">
                                     <DropdownItem :name="'edit-'+index" :disabled="0 !== row.status">修改</DropdownItem>
-                                    <DropdownItem :name="'status-'+index" :disabled=" 0 !== row.status" :divided="true">开始报名</DropdownItem>
-                                    <DropdownItem :name="'status-'+index" :disabled="0 === row.status" :divided="true">报名结束</DropdownItem>
+                                    <DropdownItem :name="'status-'+index" :disabled=" 0 !== row.status" :divided="true">开班</DropdownItem>
+                                    <DropdownItem :name="'status-'+index" :disabled="0 === row.status" :divided="true">培训结束</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </template>
@@ -129,12 +129,22 @@ export default {
                     }
                 },
                 {
-                    title: '培训时间',
+                    title: '计划开班时间',
                     align: "left",
                     width: 210,
                     render: (h, { row }) => {
                         let { startDateTime, endDateTime } = row;
                         return h('div', startDateTime + " 到 " + endDateTime);
+                    }
+                },
+                {
+                    title: '培训天数',
+                    align: "left",
+                    key: 'workingDays',
+                    width: 150,
+                     render: (h, { row }) => {
+                        let { workingDays } = row;
+                        return h('div', workingDays+"天");
                     }
                 }, {
                     title: '简要描述',

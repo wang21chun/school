@@ -47,11 +47,14 @@
                             </Switch>
                             <InputNumber class="input-number" :disabled="free" :min="0" v-model="course.price" :formatter="value => `￥ ${value} 元`"></InputNumber>
                         </FormItem>
-                        <FormItem label="培训日期日期" prop="startEndDate">
+                        <FormItem label="计划开班时间" prop="startEndDate">
                             <DatePicker :value="course.startEndDate" type="daterange" show-week-numbers placement="bottom-end" placeholder="培训开始-结束日期" format="yyyy-MM-dd" @on-change="datePickerChange"></DatePicker>
                         </FormItem>
-                        <FormItem label="课程详细描述">
-                            <Button icon="md-open" @click="openDetailsModal">编辑课程详情</Button>
+                         <FormItem label="培训天数" prop="workingDays">
+                            <InputNumber class="input-number" :min="0" v-model="course.workingDays" :formatter="value => `${value} 天`"></InputNumber>
+                        </FormItem>
+                        <FormItem label="报名条件详细描述">
+                            <Button icon="md-open" @click="openDetailsModal">编辑报名条件详细</Button>
                         </FormItem>
                         <FormItem>
                             <Button type="primary" :loading="loading" @click="save">保存</Button>
@@ -89,6 +92,7 @@ export default {
                 details: "",
                 profession: [],
                 deleteTag:[],
+                workingDays:0
             },
             editorOption: {
                 placeholder: '课程详细描述'

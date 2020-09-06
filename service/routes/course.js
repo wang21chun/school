@@ -62,7 +62,7 @@ router.post('/save', function(req, res, next) {
     let params = req.body;
     console.info("入参:", params);
     if (params.id === 0) {
-        let course = filter(params, ['title', 'groupType', 'briefDescription', 'price', 'iconUrl', 'details'])
+        let course = filter(params, ['title', 'groupType', 'briefDescription', 'price', 'iconUrl', 'details', 'workingDays'])
         course.startDateTime = params.startEndDate[0]
         course.endDateTime = params.startEndDate[1]
         let profession = params.profession;
@@ -82,7 +82,7 @@ router.post('/save', function(req, res, next) {
                 res.json(RESPONSE.ERROR(err));
             })
     } else {
-        let course = filter(params, ['id', 'title', 'groupType', 'briefDescription', 'price', 'iconUrl', 'details'])
+        let course = filter(params, ['id', 'title', 'groupType', 'briefDescription', 'price', 'iconUrl', 'details', 'workingDays'])
         course.startDateTime = params.startEndDate[0]
         course.endDateTime = params.startEndDate[1]
         const deleteTag = params.deleteTag
@@ -218,9 +218,9 @@ function insertCourse(course) {
 
 function updateCourse(course) {
     return new Promise((resolve, reject) => {
-        let sql = "UPDATE `course` SET `title` = ?,`groupType` = ? ,`price`=?,`briefDescription`=?,`details`=?,`startDateTime`=?,`endDateTime`=? WHERE `id` = ?";
-        const { title, groupType, price,briefDescription, details, startDateTime, endDateTime, id } = course
-        DB.Update(sql, [title, groupType, price,briefDescription, details, startDateTime, endDateTime, id])
+        let sql = "UPDATE `course` SET `title` = ?,`groupType` = ? ,`price`=?,`briefDescription`=?,`details`=?,`startDateTime`=?,`endDateTime`=?,`workingDays`=? WHERE `id` = ?";
+        const { title, groupType, price, briefDescription, details, startDateTime, endDateTime, workingDays, id } = course
+        DB.Update(sql, [title, groupType, price, briefDescription, details, startDateTime, endDateTime, workingDays, id])
             .then(resolve)
             .catch(reject)
     })
