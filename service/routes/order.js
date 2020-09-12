@@ -7,7 +7,14 @@ const OrderNo = require('../util/orderNo');
 const SMSClient = require("../util/SMSClient");
 const JPushClient = require("../util/JPushClient");
 const WeChat = require('../util/WeChat');
-
+const DEFAULT_FAIL = `<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[系统异常]]></return_msg>
+</xml>`
+const DEFAULT_SUCCESS = `<xml>
+  <return_code><![CDATA[SUCCESS]]></return_code>
+  <return_msg><![CDATA[OK]]></return_msg>
+</xml>`
 
 
 var router = express.Router();
@@ -113,44 +120,27 @@ router.post('/play/notify', function(req, res, next) {
     console.info("入参:", params);
     if (params != '') {
         WeChat.parserNotify(params).then(data => {
-            console.log(data);
-            let { transaction_id, out_trade_no, result_code } = data
+            let { transaction_id, out_trade_no, result_code } = data.xml
             if (result_code === 'SUCCESS') {
                 payComplete({
                     transactionId: transaction_id,
                     orderNo: out_trade_no
                 }).then(result => {
-                    console.info("订单支付状态变更成功");
-                    let xml = `<xml>
-  <return_code><![CDATA[SUCCESS]]></return_code>
-  <return_msg><![CDATA[OK]]></return_msg>
-</xml>`;
-                    res.send(xml)
+                    console.info("订单支付状态变更成功 ",transaction_id,out_trade_no);
+                    res.send(DEFAULT_SUCCESS)
                 }).catch(err => {
                     console.error("订单支付状态变更失败", err);
-                    res.send(`<xml>
-  <return_code><![CDATA[FAIL]]></return_code>
-  <return_msg><![CDATA[系统异常]]></return_msg>
-</xml>`);
+                    res.send(DEFAULT_FAIL);
                 })
-            }else{
-                res.send(`<xml>
-  <return_code><![CDATA[FAIL]]></return_code>
-  <return_msg><![CDATA[系统异常]]></return_msg>
-</xml>`);
+            } else {
+                res.send(DEFAULT_FAIL);
             }
 
         }).catch(err => {
-            res.send(`<xml>
-  <return_code><![CDATA[FAIL]]></return_code>
-  <return_msg><![CDATA[系统异常]]></return_msg>
-</xml>`);
+            res.send(DEFAULT_FAIL);
         })
     } else {
-        res.send(`<xml>
-  <return_code><![CDATA[FAIL]]></return_code>
-  <return_msg><![CDATA[系统异常]]></return_msg>
-</xml>`);
+        res.send(DEFAULT_FAIL);
 
     }
 
@@ -256,7 +246,7 @@ function formatDate(courses) {
 
 function payComplete(data) {
     return new Promise((resolve, reject) => {
-        let sql = 'UPDATE `order` SET `transactionId`=? `payComplete`= 1 WHERE `orderNo` = ?'
+        let sql = 'UPDATE `order` SET `transactionId`=? ,`payComplete`= 1 WHERE `orderNo` = ?'
         DB.Update(sql, [data.transactionId, data.orderNo]).then(resolve).catch(reject)
     })
 }
