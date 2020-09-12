@@ -112,8 +112,9 @@ router.post('/play/notify', function(req, res, next) {
     let params = req.body;
     console.info("入参:", params);
     if (params != '') {
-        WeChat.parserNotify(params).then(res => {
-            let { transaction_id, out_trade_no, result_code } = res
+        WeChat.parserNotify(params).then(data => {
+            console.log(data);
+            let { transaction_id, out_trade_no, result_code } = data
             if (result_code === 'SUCCESS') {
                 payComplete({
                     transactionId: transaction_id,
@@ -132,6 +133,11 @@ router.post('/play/notify', function(req, res, next) {
   <return_msg><![CDATA[系统异常]]></return_msg>
 </xml>`);
                 })
+            }else{
+                res.send(`<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[系统异常]]></return_msg>
+</xml>`);
             }
 
         }).catch(err => {
@@ -140,6 +146,12 @@ router.post('/play/notify', function(req, res, next) {
   <return_msg><![CDATA[系统异常]]></return_msg>
 </xml>`);
         })
+    } else {
+        res.send(`<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[系统异常]]></return_msg>
+</xml>`);
+
     }
 
 })

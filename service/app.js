@@ -23,7 +23,9 @@ app.use(cors({ credentials: true, origin: true }));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(bodyParser.text({ type: 'text/html' }))
+app.use(bodyParser.text({
+    type: 'text/*'
+}))
 
 app.use(logger('dev'));
 app.use(express.json());
