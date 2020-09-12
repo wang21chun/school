@@ -25,7 +25,7 @@ const DEFAULT_ORDER = {
     "fee_type": "CNY",
     "total_fee": "",
     "spbill_create_ip": "",
-    "notify_url": "https://wodiancai.com/school/play/notify",
+    "notify_url": "https://wodiancai.com/school//api/order/play/notify",
     "trade_type": "JSAPI",
     "openid": ""
 }
