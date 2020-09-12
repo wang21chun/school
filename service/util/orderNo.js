@@ -6,6 +6,10 @@ module.exports = {
         let num = currentDayNum.get(currentDayKey);
         num = undefined === num ? 1 : ++num;
         currentDayNum.set(currentDayKey, num);
-        return moment().format("YYYYMMDDHHmmssSSS")+num;
+        return moment().format("YYYYMMDDHHmmssSSS") + num;
+    },
+    random: () => {
+        let number = Math.random();
+        return number.toString().replace('.',"");
     }
 }

@@ -1,11 +1,14 @@
 var express = require('express');
+const _ = require('lodash');
+const moment = require('moment');
 const DB = require("../db/mysqlDB");
 const RESPONSE = require("../util/response");
 const OrderNo = require('../util/orderNo');
 const SMSClient = require("../util/SMSClient");
 const JPushClient = require("../util/JPushClient");
-const _ = require('lodash');
-const moment = require('moment');
+const WeChat = require('../util/WeChat');
+
+
 
 var router = express.Router();
 
@@ -64,10 +67,11 @@ router.post("/save", (req, res, next) => {
 
     checkRepeat(order).then(isNoRepeat => {
         if (isNoRepeat) {
+            order.payComplete = order.price <= 0 ? 1 : 0;
             DB.Insert(sql, order)
                 .then(result => {
                     coursePeopleQuantity(order.courseId);
-                    res.json(RESPONSE.SUCCESS(order.orderNo));
+                    res.json(RESPONSE.SUCCESS(Object.assign({}, order)));
                 })
                 .catch(err => {
                     console.error(err)
@@ -79,6 +83,79 @@ router.post("/save", (req, res, next) => {
     })
 });
 
+
+router.post('/payOrder', function(req, res, next) {
+    let params = req.body;
+    console.info("入参:", params);
+    let sql = "select * from `order` where `orderNo` = ?";
+    DB.QueryObject(sql, params.orderNo)
+        .then(result => {
+            result.openid = params.openid
+            return Promise.resolve({ data: [result] })
+        })
+        .then(getCourse)
+        .then(result => {
+            return Promise.resolve(result.data[0])
+        })
+        .then(pay)
+        .then(order => {
+            res.json(RESPONSE.SUCCESS(Object.assign({}, order)));
+        })
+        .catch(err => {
+            console.error(err);
+            res.json(RESPONSE.ERROR(err))
+        })
+})
+
+
+router.post('/play/notify', function(req, res, next) {
+    let params = req.body;
+    console.info("入参:", params);
+    if (params != '') {
+        WeChat.parserNotify(params).then(res => {
+            let { transaction_id, out_trade_no, result_code } = res
+            if (result_code === 'SUCCESS') {
+                payComplete({
+                    transactionId: transaction_id,
+                    orderNo: out_trade_no
+                }).then(result => {
+                    console.info("订单支付状态变更成功");
+                    let xml = `<xml>
+  <return_code><![CDATA[SUCCESS]]></return_code>
+  <return_msg><![CDATA[OK]]></return_msg>
+</xml>`;
+                    res.send(xml)
+                }).catch(err => {
+                    console.error("订单支付状态变更失败", err);
+                    res.send(`<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[系统异常]]></return_msg>
+</xml>`);
+                })
+            }
+
+        }).catch(err => {
+            res.send(`<xml>
+  <return_code><![CDATA[FAIL]]></return_code>
+  <return_msg><![CDATA[系统异常]]></return_msg>
+</xml>`);
+        })
+    }
+
+})
+
+
+
+
+function pay(order) {
+    return new Promise((resolve, reject) => {
+        if (order.price <= 0) {
+            resolve({})
+        } else {
+            WeChat.unifiedorder(order).then(resolve).catch(reject);
+        }
+    })
+}
 
 function checkRepeat(order) {
     return new Promise((resolve, reject) => {
@@ -162,6 +239,13 @@ function formatDate(courses) {
             o.endDateTime = moment(o.endDateTime).format("YYYY-MM-DD");
         });
         resolve(courses);
+    })
+}
+
+function payComplete(data) {
+    return new Promise((resolve, reject) => {
+        let sql = 'UPDATE `order` SET `transactionId`=? `payComplete`= 1 WHERE `orderNo` = ?'
+        DB.Update(sql, [data.transactionId, data.orderNo]).then(resolve).catch(reject)
     })
 }
 
