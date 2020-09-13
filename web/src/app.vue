@@ -36,6 +36,8 @@ export default {
         this.axios.get("/api/users/getUser").then(res => {
             if (res.success) {
                 this.loginComplete(res.data);
+                this.firstScreen = false;
+                this.$router.push('/')
             } else {
                 this.loginComplete({});
             }
@@ -43,18 +45,13 @@ export default {
             console.error(err);
             this.loginComplete({});
         });
-
-        setTimeout(() => {
-            this.firstScreen = false;
-            this.$router.push('/')
-        }, 1000);
     },
     computed: {
         ...mapState(['User']),
     },
     methods: {
         ...mapMutations('User', ['loginComplete']),
-       
+
     }
 }
 </script>

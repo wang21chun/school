@@ -62,7 +62,7 @@ router.post('/save', function(req, res, next) {
     let params = req.body;
     console.info("入参:", params);
     if (params.id === 0) {
-        let course = filter(params, ['title', 'groupType', 'briefDescription', 'price', 'iconUrl', 'details', 'workingDays'])
+        let course = filter(params, ['title', 'groupType', 'briefDescription', 'iconUrl', 'details', 'workingDays'])
         course.startDateTime = params.startEndDate[0]
         course.endDateTime = params.startEndDate[1]
         let profession = params.profession;
@@ -70,7 +70,7 @@ router.post('/save', function(req, res, next) {
             .then(result => {
                 return new Promise((resolve, reject) => {
                     resolve(profession.map(o => {
-                        return [result.insertId, o.value, o.label];
+                        return [result.insertId, o.value, o.label,o.price];
                     }));
                 });
             })
@@ -82,7 +82,7 @@ router.post('/save', function(req, res, next) {
                 res.json(RESPONSE.ERROR(err));
             })
     } else {
-        let course = filter(params, ['id', 'title', 'groupType', 'briefDescription', 'price', 'iconUrl', 'details', 'workingDays'])
+        let course = filter(params, ['id', 'title', 'groupType', 'briefDescription', 'iconUrl', 'details', 'workingDays'])
         course.startDateTime = params.startEndDate[0]
         course.endDateTime = params.startEndDate[1]
         const deleteTag = params.deleteTag
@@ -91,7 +91,7 @@ router.post('/save', function(req, res, next) {
             .then(result => {
                 return new Promise((resolve, reject) => {
                     resolve(profession.map(o => {
-                        return [course.id, o.value, o.label];
+                        return [course.id, o.value, o.label,o.price];
                     }));
                 });
             })
@@ -127,7 +127,7 @@ router.get('/searchClassification', function(req, res) {
 
 function insertProfession(data) {
     return new Promise((resolve, reject) => {
-        let sql = "INSERT INTO `profession` (`courseId`,`value`,`label`) VALUES ?";
+        let sql = "INSERT INTO `profession` (`courseId`,`value`,`label`,`price`) VALUES ?";
         if (data.length > 0) {
             DB.Insert(sql, [data])
                 .then(result => {

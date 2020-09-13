@@ -20,37 +20,37 @@ const router = new VueRouter({
                 component: userList,
                 meta: { requiresAuth: true },
                 name: 'userList',
-            },{
+            }, {
                 path: '/userEdit/:id',
                 component: userEdit,
                 meta: { requiresAuth: true },
                 name: 'userEdit',
-            },{
+            }, {
                 path: '/courseList',
                 component: courseList,
                 meta: { requiresAuth: true },
                 name: 'courseList',
-            },{
+            }, {
                 path: '/courseEdit',
                 component: courseEdit,
                 meta: { requiresAuth: true },
                 name: 'courseEdit',
                 props: (route) => route.params
-            },{
+            }, {
                 path: '/orderList',
                 component: orderList,
                 meta: { requiresAuth: true },
                 name: 'orderList',
             }]
         },
-        { path: '/login', component: login, name: "login" }
+        { path: '/login', component: login, name: "login", meta: { requiresAuth: false }, }
     ]
 });
 
 router.beforeEach((to, from, next) => {
     let login = to.matched.some(record => true == record.meta.requiresAuth) && !store.state.User.login;
     if (login) {
-        next({ path: '/login' })
+        next({ name: 'login' })
     } else {
         next();
     }

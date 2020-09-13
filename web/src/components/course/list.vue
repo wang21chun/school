@@ -114,8 +114,11 @@ export default {
 
                 {
                     title: '报名费',
-                    key: 'price',
-                    width: 80,
+                    render: (h, { row }) => {
+                        let { profession = [] } = row;
+                        let tags = profession.map(o => `${o.label}-${o.price}元`);
+                        return h('div', tags.join(","));
+                    }
                 },
                 {
                     title: '工种',
@@ -123,7 +126,7 @@ export default {
                     maxWidth: 200,
                     tooltip: true,
                     render: (h, { row }) => {
-                        let { profession=[] } = row;
+                        let { profession = [] } = row;
                         let tags = profession.map(o => o.label);
                         return h('div', tags.join(","));
                     }
@@ -142,9 +145,9 @@ export default {
                     align: "left",
                     key: 'workingDays',
                     width: 150,
-                     render: (h, { row }) => {
+                    render: (h, { row }) => {
                         let { workingDays } = row;
-                        return h('div', workingDays+"天");
+                        return h('div', workingDays + "天");
                     }
                 }, {
                     title: '简要描述',
