@@ -140,6 +140,24 @@ router.get("/getUser", (req, res, next) => {
     }
 })
 
+router.post("/integral/detail", (req, res, next) => {
+    let params = req.body;
+    console.info("入参:", params);
+    if (undefined !== params.userId) {
+        queryIntegral(params)
+            .then(result => {
+                res.json(RESPONSE.SUCCESS(result))
+            }).catch(err => {
+                console.error(err)
+                res.json(RESPONSE.ERROR())
+            })
+
+    } else {
+        res.json(RESPONSE.SUCCESS({}));
+    }
+
+})
+
 function getUser(searchInfo) {
     return new Promise((resolve, reject) => {
         let sql = ["SELECT * FROM `users` "];
@@ -180,7 +198,7 @@ function insertUser(params) {
 function updateUser(params, id) {
     return new Promise((resolve, reject) => {
         let sql = "UPDATE `users` SET `mobile`=?,`name`=?,`idNumber`=?,`sex` =?, `nation`=?,`age`=?,`address` =? ,`levelEducation`=? WHERE `id` =? ";
-        DB.Update(sql, [params.mobile,params.name,params.idNumber,params.sex,params.nation,params.age,params.address,params.levelEducation, id])
+        DB.Update(sql, [params.mobile, params.name, params.idNumber, params.sex, params.nation, params.age, params.address, params.levelEducation, id])
             .then(result => {
                 let user = Object.assign({}, params, { id });
                 resolve(user);
@@ -188,4 +206,18 @@ function updateUser(params, id) {
     })
 }
 
+function queryIntegral(params) {
+    return new Promise((resolve, reject) => {
+        let sql = "SELECT * FROM `integral` WHERE `userId` = ? "
+        let page = params.page
+        let index = (page.current - 1) * page.pageSize
+        let values = [params.userId, index, page.pageSize]
+        DB.QueryPage(sql, values)
+            .then(results => {
+                resolve(Object.assign(page, results))
+            }).catch(reject)
+
+    })
+
+}
 module.exports = router;

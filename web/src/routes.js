@@ -8,6 +8,7 @@ const userEdit = () => import('./components/user/edit.vue')
 const courseList = () => import('./components/course/list.vue')
 const courseEdit = () => import('./components/course/edit.vue')
 const orderList = () => import('./components/order/list.vue')
+const employmentList = () => import('./components/employment/list.vue')
 Vue.use(VueRouter)
 const router = new VueRouter({
     routes: [{
@@ -41,6 +42,11 @@ const router = new VueRouter({
                 component: orderList,
                 meta: { requiresAuth: true },
                 name: 'orderList',
+            }, {
+                path: '/employmentList',
+                component: employmentList,
+                meta: { requiresAuth: true },
+                name: 'employmentList',
             }]
         },
         { path: '/login', component: login, name: "login", meta: { requiresAuth: false }, }

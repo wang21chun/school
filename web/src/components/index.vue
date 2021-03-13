@@ -86,6 +86,13 @@
                         </template>
                         <MenuItem name="courseList" :to="{path:'/courseList'}">培训类别</MenuItem>
                     </Submenu>
+                     <Submenu name="employment">
+                        <template slot="title">
+                            <Icon type="md-list-box" />
+                            就业推荐管理
+                        </template>
+                        <MenuItem name="employmentList" :to="{path:'/employmentList'}">就业机构列表</MenuItem>
+                    </Submenu>
                 </Menu>
                 <div slot="trigger"></div>
             </Sider>

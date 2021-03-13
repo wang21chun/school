@@ -42,12 +42,13 @@ let QueryPage = (sql, values) => {
     let poll = POLL;
     return new Promise((resolve, reject) => {
         let countSql = sqlUtil.countSql(sql);
-        console.info(sql, values);
+        console.info(countSql, values);
         poll.query(countSql, values, (err, results, fields) => {
             if (err) reject(err);
             else {
                 let count = results[0].count;
                 let limitSql = sqlUtil.limitSql(sql);
+                console.info(limitSql, values);
                 poll.query(limitSql, values, (err, results, fields) => {
                     if (err) reject(err)
                     else {
