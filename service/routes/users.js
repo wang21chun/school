@@ -208,7 +208,7 @@ function updateUser(params, id) {
 
 function queryIntegral(params) {
     return new Promise((resolve, reject) => {
-        let sql = "SELECT * FROM `integral` WHERE `userId` = ? "
+        let sql = "SELECT * FROM `integral` WHERE `userId` = ? ORDER BY createTime DESC"
         let page = params.page
         let index = (page.current - 1) * page.pageSize
         let values = [params.userId, index, page.pageSize]
