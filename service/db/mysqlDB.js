@@ -151,6 +151,47 @@ let UpdateOrder = (datas) => {
     });
 }
 
+/**
+    更新用户积分并记录流水
+**/
+let UpdateIntegral= (datas) => {
+    let poll = POLL;
+    return new Promise((resolve, reject) => {
+        BeginTransaction()
+            .then(connection => {
+                let all = datas.map(o => {
+                    return Exec(connection, o.sql, o.values);
+                });
+                Promise.all(all)
+                    .then(results => {
+                        connection.commit(err => {
+                            if (err) {
+                                return connection.rollback(() => {
+                                    connection.release();
+                                    reject(err)
+                                });
+                            }
+                        });
+                        connection.release();
+                        resolve(results);
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        connection.rollback(() => {
+                            connection.release();
+                            reject(err);
+                        });
+
+                    })
+            })
+            .catch(err => {
+                console.error(err);
+                reject(err)
+            })
+
+    });
+}
+
 
 module.exports = {
     QueryObject,
@@ -159,5 +200,6 @@ module.exports = {
     Insert,
     Update,
     Delete,
-    UpdateOrder
+    UpdateOrder,
+    UpdateIntegral
 };

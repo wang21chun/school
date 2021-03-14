@@ -188,7 +188,14 @@ function insertUser(params) {
             ])
             .then(result => {
                 let user = Object.assign({}, params, { id: result.insertId });
-                resolve(user);
+                presentIntegral({
+                    quantity: 10,
+                    userId: result.insertId,
+                    operation: 1,
+                    explain: "首次注册"
+                }).then(result => {
+                    resolve(user)
+                }).catch(reject)
             }).catch(reject);
     })
 }
@@ -218,6 +225,23 @@ function queryIntegral(params) {
             }).catch(reject)
 
     })
-
 }
+
+function presentIntegral(params) {
+    return new Promise((resolve, reject) => {
+        let update = "UPDATE `users` SET `integral`=`integral`+? WHERE `id` = ? "
+        let insert = "INSERT INTO `integral` (`quantity`, `userId`, `operation`, `explain`) VALUES ( ? ) "
+
+        let datas = [{
+            sql: update,
+            values: [params.quantity, params.userId]
+        }, {
+            sql: insert,
+            values: [[params.quantity, params.userId, params.operation, params.explain]]
+        }]
+
+        DB.UpdateIntegral(datas).then(resolve).catch(reject)
+    })
+}
+
 module.exports = router;
