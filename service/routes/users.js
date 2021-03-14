@@ -181,8 +181,8 @@ function getUser(searchInfo) {
 
 function insertUser(params) {
     return new Promise((resolve, reject) => {
-        let sql = "INSERT INTO `users` (`openid`,`mobile`,`name`,`idNumber`) VALUES ? ";
-        let values = [params.openid, params.mobile, params.name, params.idNumber];
+        let sql = "INSERT INTO `users` (`openid`,`mobile`,`name`,`idNumber`,`referralCode`) VALUES ? ";
+        let values = [params.openid, params.mobile, params.name, params.idNumber,params.referralCode];
         DB.Insert(sql, [
                 [values]
             ])
